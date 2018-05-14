@@ -82,12 +82,12 @@ stdin(function(input) {
         exit(1);
     }
 
-    postEngageApi(data);
+    postTrackApi(data);
 });
 
 // ------------------------------------------
 
-function postEngageApi(batch) {
+function postTrackApi(batch) {
     var sendBatch = function() {
         if (batch.length === 0) {
             // no more to send!
@@ -95,16 +95,17 @@ function postEngageApi(batch) {
         }
 
         // get new url for each request to avoid possible signature expiration
-        var url = getUrl("engage", { verbose: 1, ignore_time: true, ip: 0 });
+        var url = getUrl("import", { verbose: 1, ip: 0 });
 
         // prepare chunk of data to send
         var chunk = batch.splice(0, BATCH_SIZE);
 
         // make sure it has a $token
         chunk.forEach(function(entry) {
-            if (!entry.$token) {
-                entry.$token = MIXPANEL_API_TOKEN;
+            if (!entry.properties) {
+                entry.properties = {}
             }
+			entry.properties.token = MIXPANEL_API_TOKEN;
         });
 
         var data = {
@@ -152,5 +153,7 @@ function getUrl(endpoint, args) {
     var sig = crypto.createHash('md5').update(concat_keys + MIXPANEL_API_SECRET).digest("hex");
 
     // return request url
-    return base_url + endpoint + "/?" + params.join("&") + "&sig=" + sig;
+    let requestUrl = base_url + endpoint + "/?" + params.join("&") + "&sig=" + sig;
+    // console.log('Request URL: '+ requestUrl);
+    return requestUrl;
 }

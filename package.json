@@ -27,6 +27,7 @@
   "license": "MIT",
   "preferGlobal": true,
   "bin": {
-    "engagepost": "engagepost.js"
+    "engagepost": "engagepost.js",
+    "trackpost": "trackpost.js"
   }
 }
